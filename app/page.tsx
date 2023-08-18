@@ -1,5 +1,3 @@
-import Link from 'next/link'
-import { Quote } from '@/components/Quote'
 import { redirect } from 'next/navigation'
 
 export default async function Home() {

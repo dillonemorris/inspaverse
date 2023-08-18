@@ -1,3 +1,7 @@
 export const Quote = ({ children }) => {
-  return <h1>{children}</h1>
+  return (
+    <blockquote className="text-4xl text-center max-w-2xl leading-snug">
+      {children}
+    </blockquote>
+  )
 }
