@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { revalidatePath } from 'next/cache'
 
 export default async function NextButton({ tags }) {
   const nextQuote = await getNextQuote(tags)
