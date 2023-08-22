@@ -1,22 +1,15 @@
 import { Quote } from './Quote'
 import { BackButton } from './BackButton'
 import NextButton from './NextButton'
-import { Tags } from './Tags'
 
 export default async function QuotePage({ params, searchParams }) {
   const quote = await getQuote(params.id)
 
   return (
-    <div className="flex-col">
-      <div className="flex">
-        <BackButton />
-        <Quote>{quote.content}</Quote>
-        <NextButton tags={searchParams.tags} />
-      </div>
-
-      <div className="pt-24">
-        <Tags />
-      </div>
+    <div className="flex">
+      <BackButton />
+      <Quote>{quote.content}</Quote>
+      <NextButton tags={searchParams.tags} />
     </div>
   )
 }
