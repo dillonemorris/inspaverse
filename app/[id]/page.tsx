@@ -6,7 +6,7 @@ export default async function QuotePage({ params, searchParams }) {
   const quote = await getQuote(params.id)
 
   return (
-    <div className="flex">
+    <div className="flex items-center h-64 max-w-2xl">
       <BackButton />
       <Quote>{quote.content}</Quote>
       <NextButton tags={searchParams.tags} />

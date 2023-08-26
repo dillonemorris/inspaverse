@@ -1,10 +1,15 @@
 import Link from 'next/link'
+import { ArrowRightCircleIcon } from '@heroicons/react/20/solid'
 
 export default async function NextButton({ tags }) {
   const nextQuote = await getNextQuote(tags)
   const nextUrl = buildUrlWithTagsParam(`/${nextQuote[0]._id}`, tags)
 
-  return <Link href={nextUrl}>Next</Link>
+  return (
+    <Link href={nextUrl}>
+      <ArrowRightCircleIcon className="h-7 w-7 text-white-400" />
+    </Link>
+  )
 }
 
 async function getNextQuote(tags) {

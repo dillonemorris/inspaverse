@@ -24,7 +24,7 @@ export default function RootLayout({
       >
         <Nav />
         <main className="flex flex-col items-center justify-center">
-          <div className="z-10 max-w-5xl items-center justify-between text-sm lg:flex">
+          <div className="items-center justify-between text-sm lg:flex">
             {children}
           </div>
         </main>

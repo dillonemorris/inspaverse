@@ -1,7 +1,7 @@
 'use client'
 import useSWR from 'swr'
 import Link from 'next/link'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Dialog, Transition } from '@headlessui/react'
 
@@ -52,13 +52,17 @@ const getColorVariant = (color, isActive) =>
     },
   })[color][isActive ? 'active' : 'base']
 
-// @ts-ignore
-const fetcher = (...args) => fetch(...args).then((res) => res.json())
+const fetcher = (url: URL) => fetch(url).then((res) => res.json())
 
-export const TagsModal = ({ isOpen, onClose }) => {
+type TagsModalProps = {
+  onClose: () => void
+  isOpen: boolean
+}
+
+export const TagsModal = ({ isOpen, onClose }: TagsModalProps) => {
   const searchParams = useSearchParams()
-  const initialTags = searchParams.get('tags')?.split('|')
-  const [tags, setTags] = useState<string[]>(initialTags || [])
+  const initialTags = searchParams.get('tags')?.split('|') || []
+  const [tags, setTags] = useState<string[]>(initialTags)
 
   const apiUrl = buildUrlWithTagsParam(
     'https://api.quotable.io/quotes/random',
@@ -86,7 +90,14 @@ export const TagsModal = ({ isOpen, onClose }) => {
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={onClose}>
+      <Dialog
+        as="div"
+        className="relative z-10"
+        onClose={() => {
+          onClose()
+          setTags(initialTags)
+        }}
+      >
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
