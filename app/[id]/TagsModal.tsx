@@ -4,53 +4,7 @@ import Link from 'next/link'
 import { Fragment, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Dialog, Transition } from '@headlessui/react'
-
-const COLORS = {
-  GRAY: 'gray',
-  RED: 'red',
-  YELLOW: 'yellow',
-  GREEN: 'green',
-  BLUE: 'blue',
-  INDIGO: 'indigo',
-  PURPLE: 'purple',
-  PINK: 'pink',
-}
-
-const getColorVariant = (color, isActive) =>
-  ({
-    [COLORS.GRAY]: {
-      base: 'bg-gray-400/10 text-gray-400 ring-gray-400/20',
-      active: 'bg-gray-200/80 text-gray-800 ring-gray-500',
-    },
-    [COLORS.RED]: {
-      base: 'bg-red-400/10 text-red-400 ring-red-400/20',
-      active: 'bg-red-200/80 text-red-800 ring-red-600',
-    },
-    [COLORS.YELLOW]: {
-      base: 'bg-yellow-400/10 text-yellow-400 ring-yellow-400/20',
-      active: 'bg-yellow-200/80 text-yellow-800 ring-yellow-600',
-    },
-    [COLORS.GREEN]: {
-      base: 'bg-green-400/10 text-green-400 ring-green-400/20',
-      active: 'bg-green-200/80 text-green-900 ring-green-600',
-    },
-    [COLORS.BLUE]: {
-      base: 'bg-blue-400/10 text-blue-400 ring-blue-400/20',
-      active: 'bg-blue-300/90 text-blue-800 ring-blue-600',
-    },
-    [COLORS.INDIGO]: {
-      base: 'bg-indigo-400/10 text-indigo-400 ring-indigo-400/20',
-      active: 'bg-indigo-300 text-indigo-800 ring-indigo-600',
-    },
-    [COLORS.PURPLE]: {
-      base: 'bg-purple-400/10 text-purple-400 ring-purple-400/20',
-      active: 'bg-purple-300/90 text-purple-800 ring-purple-600',
-    },
-    [COLORS.PINK]: {
-      base: 'bg-pink-400/10 text-pink-400 ring-pink-400/20',
-      active: 'bg-pink-300/90 text-pink-800 ring-pink-600',
-    },
-  })[color][isActive ? 'active' : 'base']
+import { API_RANDOM_QUOTE, API_TAGS } from '@/app/constants'
 
 const fetcher = (url: URL) => fetch(url).then((res) => res.json())
 
@@ -64,19 +18,15 @@ export const TagsModal = ({ isOpen, onClose }: TagsModalProps) => {
   const initialTags = searchParams.get('tags')?.split('|') || []
   const [tags, setTags] = useState<string[]>(initialTags)
 
-  const apiUrl = buildUrlWithTagsParam(
-    'https://api.quotable.io/quotes/random',
-    tags
-  )
+  const apiUrl = buildUrlWithTagsParam(API_RANDOM_QUOTE, tags)
 
-  const { data, isLoading } = useSWR(apiUrl, fetcher)
-  const nextQuoteId = !isLoading && data[0]?._id
+  const { data: randomTaggedQuote, isLoading } = useSWR(apiUrl, fetcher)
+  const nextQuoteId = !isLoading && randomTaggedQuote[0]?._id
   const nextUrl = buildUrlWithTagsParam(`/${nextQuoteId}`, tags)
 
   const handleTagClick = (tag: string) => {
-    const doesTagExist = tags.indexOf(tag) > -1
     const removeOrAddTag = (tags) => {
-      if (doesTagExist) {
+      if (tags.includes(tag)) {
         return tags.filter((t) => t !== tag)
       }
 
@@ -86,7 +36,8 @@ export const TagsModal = ({ isOpen, onClose }: TagsModalProps) => {
     setTags(removeOrAddTag)
   }
 
-  const tagsData = useTags()
+  const handleGetColorVariant = ({ color, slug }: Tag) =>
+    getColorVariant(color, tags.includes(slug))
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -135,20 +86,10 @@ export const TagsModal = ({ isOpen, onClose }: TagsModalProps) => {
                 </div>
 
                 <div className="-m-1 py-6">
-                  {tagsData.map((tag) => {
-                    return (
-                      <button
-                        key={tag.slug}
-                        onClick={() => handleTagClick(tag.slug)}
-                        className={`inline-flex m-1 items-center rounded-md px-2 py-1 text-sm font-medium ring-1 ring-inset ${getColorVariant(
-                          tag.color,
-                          tags.some((t) => t === tag.slug)
-                        )}`}
-                      >
-                        {tag.name}
-                      </button>
-                    )
-                  })}
+                  <Tags
+                    onTagClick={handleTagClick}
+                    getColorVariant={handleGetColorVariant}
+                  />
                 </div>
 
                 <div className="mt-4">
@@ -169,23 +110,96 @@ export const TagsModal = ({ isOpen, onClose }: TagsModalProps) => {
   )
 }
 
-const colorsArray = Object.values(COLORS)
+const buildUrlWithTagsParam = (url, tags) => {
+  const tagsAsParam = tags.join('|')
+  const param = tags.length > 1 ? tagsAsParam : tags[0]
+  return tags?.length ? `${url}?tags=${param}` : url
+}
 
-const useTags = () => {
-  const { data: tagsData } = useSWR('https://api.quotable.io/tags', fetcher)
-  const filteredTags = tagsData?.filter((tag) => tag.quoteCount > 10) || []
-  const colorsRepeated = colorsArray.concat(...Array(2).fill(colorsArray))
+type TagsProps = {
+  onTagClick: (tag: string) => void
+  getColorVariant: (tag: Tag) => string
+}
 
-  const tags = filteredTags.reduce((acc, { name, slug }, i) => {
+const Tags = ({ onTagClick, getColorVariant }: TagsProps) => {
+  const tagsData = useTags()
+
+  return tagsData.map((tag) => {
+    return (
+      <button
+        key={tag.slug}
+        onClick={() => onTagClick(tag.slug)}
+        className={`inline-flex m-1 items-center rounded-md px-2 py-1 text-sm font-medium ring-1 ring-inset 
+        ${getColorVariant(tag)}`}
+      >
+        {tag.name}
+      </button>
+    )
+  })
+}
+
+type Tag = {
+  name: string
+  slug: string
+  color: (typeof COLORS)[keyof typeof COLORS]
+}
+
+const useTags = (): Tag[] => {
+  const { data: originalTags } = useSWR(API_TAGS, fetcher)
+  const colorsRepeated = [...colorsArray, ...colorsArray, ...colorsArray]
+  const tagsWithTenOrMoreQuotes = originalTags?.filter((t) => t.quoteCount > 10)
+
+  return (tagsWithTenOrMoreQuotes || []).reduce((acc, { name, slug }, i) => {
     const color = colorsRepeated[i]
     return [...acc, { name, slug, color }]
   }, [])
-
-  return tags
 }
 
-const buildUrlWithTagsParam = (url, tags) => {
-  const tagsFormatted = tags.join('|').toString()
-  const tagsParams = tags.length > 1 ? tagsFormatted : tags[0]
-  return tags?.length ? `${url}?tags=${tagsParams}` : url
-}
+const COLORS = {
+  GRAY: 'gray',
+  RED: 'red',
+  YELLOW: 'yellow',
+  GREEN: 'green',
+  BLUE: 'blue',
+  INDIGO: 'indigo',
+  PURPLE: 'purple',
+  PINK: 'pink',
+} as const
+
+const colorsArray = Object.values(COLORS)
+
+const getColorVariant = (color: string, isActive: boolean): string =>
+  ({
+    [COLORS.GRAY]: {
+      base: 'bg-gray-400/10 text-gray-400 ring-gray-400/20',
+      active: 'bg-gray-200/80 text-gray-800 ring-gray-500',
+    },
+    [COLORS.RED]: {
+      base: 'bg-red-400/10 text-red-400 ring-red-400/20',
+      active: 'bg-red-200/80 text-red-800 ring-red-600',
+    },
+    [COLORS.YELLOW]: {
+      base: 'bg-yellow-400/10 text-yellow-400 ring-yellow-400/20',
+      active: 'bg-yellow-200/80 text-yellow-800 ring-yellow-600',
+    },
+    [COLORS.GREEN]: {
+      base: 'bg-green-400/10 text-green-400 ring-green-400/20',
+      active: 'bg-green-200/80 text-green-900 ring-green-600',
+    },
+    [COLORS.BLUE]: {
+      base: 'bg-blue-400/10 text-blue-400 ring-blue-400/20',
+      active: 'bg-blue-300/90 text-blue-800 ring-blue-600',
+    },
+    [COLORS.INDIGO]: {
+      base: 'bg-indigo-400/10 text-indigo-400 ring-indigo-400/20',
+      active: 'bg-indigo-300 text-indigo-800 ring-indigo-600',
+    },
+    [COLORS.PURPLE]: {
+      base: 'bg-purple-400/10 text-purple-400 ring-purple-400/20',
+      active: 'bg-purple-300/90 text-purple-800 ring-purple-600',
+    },
+    [COLORS.PINK]: {
+      base: 'bg-pink-400/10 text-pink-400 ring-pink-400/20',
+      active: 'bg-pink-300/90 text-pink-800 ring-pink-600',
+    },
+  })[color][isActive ? 'active' : 'base']

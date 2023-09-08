@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import { API_RANDOM_QUOTE } from '@/app/constants'
 
 export default async function Home() {
   const data = await getQuote()
@@ -8,13 +9,11 @@ export default async function Home() {
 }
 
 async function getQuote() {
-  const res = await fetch('https://api.quotable.io/quotes/random', {
+  const res = await fetch(API_RANDOM_QUOTE, {
     cache: 'no-store',
   })
 
   if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    // TODO: Create error boundary
     throw new Error('Failed to fetch data')
   }
 
