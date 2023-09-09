@@ -9,10 +9,10 @@ export default async function QuotePage({ params, searchParams }) {
     <div className="flex items-center h-64 max-w-2xl">
       <BackButton />
       <div className="text-center">
-        <blockquote className="text-4xl leading-snug px-16 py-12 text-white">
+        <blockquote className="text-2xl lg:text-4xl lg:leading-snug px-16 py-12 text-white">
           {quote.content}
         </blockquote>
-        <p className="text-white text-lg">{quote.author}</p>
+        <p className="text-white text-sm lg:text-lg">{quote.author}</p>
       </div>
       <NextButton tags={searchParams.tags} />
     </div>
