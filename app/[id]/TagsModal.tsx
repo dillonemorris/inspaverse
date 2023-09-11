@@ -5,6 +5,7 @@ import { Fragment, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Dialog, Transition } from '@headlessui/react'
 import { API_RANDOM_QUOTE, API_TAGS } from '@/app/constants'
+import { ArrowPathIcon } from '@heroicons/react/20/solid'
 
 const fetcher = (url: URL) => fetch(url).then((res) => res.json())
 
@@ -92,14 +93,15 @@ export const TagsModal = ({ isOpen, onClose }: TagsModalProps) => {
                   />
                 </div>
 
-                <div className="mt-4">
+                <div className="mt-4 flex items-center justify-between">
                   <Link
                     href={nextUrl}
                     onClick={onClose}
-                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-800 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                   >
                     Save changes
                   </Link>
+                  <ArrowPathIcon className="h-6 w-6 text-blue-100 transition ease-in-out hover:text-blue-300 hover:scale-110 duration-300" />
                 </div>
               </Dialog.Panel>
             </Transition.Child>
@@ -129,8 +131,8 @@ const Tags = ({ onTagClick, getColorVariant }: TagsProps) => {
       <button
         key={tag.slug}
         onClick={() => onTagClick(tag.slug)}
-        className={`inline-flex m-1 items-center rounded-md px-2 py-1 text-sm font-medium ring-1 ring-inset 
-        ${getColorVariant(tag)}`}
+        className={`inline-flex m-1 items-center rounded-md px-2 py-1 text-sm font-medium ring-1 ring-inset
+        ${getColorVariant(tag)} transition ease-in-out hover:bg-transparent`}
       >
         {tag.name}
       </button>
@@ -171,35 +173,39 @@ const colorsArray = Object.values(COLORS)
 const getColorVariant = (color: string, isActive: boolean): string =>
   ({
     [COLORS.GRAY]: {
-      base: 'bg-gray-400/10 text-gray-400 ring-gray-400/20',
-      active: 'bg-gray-200/80 text-gray-800 ring-gray-500',
+      base: 'bg-gray-400/10 text-gray-300 ring-gray-400/20',
+      active: 'bg-gray-200/80 hover:bg-gray-200/80 text-gray-800 ring-gray-500',
     },
     [COLORS.RED]: {
       base: 'bg-red-400/10 text-red-400 ring-red-400/20',
-      active: 'bg-red-200/80 text-red-800 ring-red-600',
+      active: 'bg-red-200/80 hover:bg-red-200/80 text-red-800 ring-red-600',
     },
     [COLORS.YELLOW]: {
       base: 'bg-yellow-400/10 text-yellow-400 ring-yellow-400/20',
-      active: 'bg-yellow-200/80 text-yellow-800 ring-yellow-600',
+      active:
+        'bg-yellow-100/80 hover:bg-yellow-100/80 text-yellow-800 ring-yellow-600',
     },
     [COLORS.GREEN]: {
       base: 'bg-green-400/10 text-green-400 ring-green-400/20',
-      active: 'bg-green-200/80 text-green-900 ring-green-600',
+      active:
+        'bg-green-200/80 hover:bg-green-200/80 text-green-900 ring-green-600',
     },
     [COLORS.BLUE]: {
       base: 'bg-blue-400/10 text-blue-400 ring-blue-400/20',
-      active: 'bg-blue-300/90 text-blue-800 ring-blue-600',
+      active: 'bg-blue-200/90 hover:bg-blue-200/90 text-blue-800 ring-blue-600',
     },
     [COLORS.INDIGO]: {
       base: 'bg-indigo-400/10 text-indigo-400 ring-indigo-400/20',
-      active: 'bg-indigo-300 text-indigo-800 ring-indigo-600',
+      active:
+        'bg-indigo-200 hover:bg-indigo-200 text-indigo-800 ring-indigo-600',
     },
     [COLORS.PURPLE]: {
       base: 'bg-purple-400/10 text-purple-400 ring-purple-400/20',
-      active: 'bg-purple-300/90 text-purple-800 ring-purple-600',
+      active:
+        'bg-purple-200/90 hover:bg-purple-200/90 text-purple-800 ring-purple-600',
     },
     [COLORS.PINK]: {
       base: 'bg-pink-400/10 text-pink-400 ring-pink-400/20',
-      active: 'bg-pink-300/90 text-pink-800 ring-pink-600',
+      active: 'bg-pink-200/90 hover:bg-pink-200/90 text-pink-800 ring-pink-600',
     },
   })[color][isActive ? 'active' : 'base']

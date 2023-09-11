@@ -38,23 +38,18 @@ export default async function RootLayout({
 }
 
 const BackgroundImage = async () => {
-  const data = await getBackgroundImage()
-  const backgroundImage = {
-    url: data?.urls.full || '',
-    alt: data?.alt_description || '',
+  const backgroundImage = await getBackgroundImage()
+  const placeholderUrl = await getBlurredImageUrl(backgroundImage?.urls.full)
+
+  if (!backgroundImage) {
+    return null
   }
-
-  const buffer = await fetch(backgroundImage.url).then(async (res) =>
-    Buffer.from(await res.arrayBuffer())
-  )
-
-  const { base64 } = await getPlaiceholder(buffer)
 
   return (
     <Image
-      alt={backgroundImage.alt}
-      src={backgroundImage.url}
-      blurDataURL={base64}
+      alt={backgroundImage.alt_description}
+      src={backgroundImage.urls.full}
+      blurDataURL={placeholderUrl}
       placeholder="blur"
       fill
       priority
@@ -81,4 +76,18 @@ async function getBackgroundImage() {
   }
 
   return res.json()
+}
+
+async function getBlurredImageUrl(originalImageUrl?: string): Promise<string> {
+  if (!originalImageUrl) {
+    return ''
+  }
+
+  const buffer = await fetch(originalImageUrl).then(async (res) =>
+    Buffer.from(await res.arrayBuffer())
+  )
+
+  const { base64 } = await getPlaiceholder(buffer)
+
+  return base64
 }
