@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { API_RANDOM_QUOTE } from '@/app/constants'
+import { API_RANDOM_QUOTE } from '@/app/util'
 
 export default async function Home() {
   const data = await getQuote()

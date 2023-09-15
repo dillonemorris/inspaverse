@@ -1,8 +1,14 @@
 import { BackButton } from './BackButton'
 import NextButton from './NextButton'
-import { API_QUOTES } from '@/app/constants'
+import { API_QUOTES } from '@/app/util'
 
-export default async function QuotePage({ params, searchParams }) {
+export default async function QuotePage({
+  params,
+  searchParams,
+}: {
+  params: { id: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
   const quote = await getQuote(params.id)
 
   return (
@@ -19,7 +25,7 @@ export default async function QuotePage({ params, searchParams }) {
   )
 }
 
-async function getQuote(id) {
+async function getQuote(id: string) {
   const res = await fetch(`${API_QUOTES}/${id}`, {
     cache: 'no-store',
   })

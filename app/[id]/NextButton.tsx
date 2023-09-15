@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import { ArrowRightCircleIcon } from '@heroicons/react/20/solid'
-import { API_RANDOM_QUOTE } from '@/app/constants'
+import { API_RANDOM_QUOTE } from '@/app/util'
 
 type NextButtonProps = {
-  tags: string[]
+  tags: string | string[] | undefined
 }
 
 export default async function NextButton({ tags }: NextButtonProps) {
@@ -17,13 +17,16 @@ export default async function NextButton({ tags }: NextButtonProps) {
   )
 }
 
-async function getNextQuote(tags) {
+async function getNextQuote(tags: string | string[] | undefined) {
   const url = buildUrlWithTagsParam(API_RANDOM_QUOTE, tags)
   const res = await fetch(url, { cache: 'no-store' })
 
   return res.json()
 }
 
-const buildUrlWithTagsParam = (baseUrl: string, tags: string[]) => {
+const buildUrlWithTagsParam = (
+  baseUrl: string,
+  tags: string | string[] | undefined
+) => {
   return tags?.length ? `${baseUrl}?tags=${tags}` : baseUrl
 }
