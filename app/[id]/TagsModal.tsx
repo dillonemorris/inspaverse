@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Fragment, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Dialog, Transition } from '@headlessui/react'
-import { API_RANDOM_QUOTE, TagColors, fetcher, Tag } from '@/app/util'
+import { API_RANDOM_QUOTE, fetcher, Tag, getColorVariant } from '@/app/util'
 import { ArrowPathIcon } from '@heroicons/react/20/solid'
 
 type TagsModalProps = {
@@ -30,7 +30,7 @@ export const TagsModal = ({ isOpen, onClose, tags }: TagsModalProps) => {
     setSelectedTags(removeOrAddTag)
   }
 
-  const handleGetColorVariant = ({ color, slug }: Tag) =>
+  const handleGetTagColorVariant = ({ color, slug }: Tag) =>
     getColorVariant(color, selectedTags.includes(slug))
 
   return (
@@ -83,7 +83,7 @@ export const TagsModal = ({ isOpen, onClose, tags }: TagsModalProps) => {
                   <Tags
                     tags={tags}
                     onTagClick={handleTagClick}
-                    getColorVariant={handleGetColorVariant}
+                    getTagColorVariant={handleGetTagColorVariant}
                   />
                 </div>
 
@@ -115,79 +115,34 @@ const useNextQuoteUrl = (tags: string[]): string => {
   return addTagParamToUrl(`/${nextQuoteId}`, tags)
 }
 
+const addTagParamToUrl = (url: string, tags: string[]): string => {
+  const param = tags.length > 1 ? tags.join('|') : tags[0]
+  return tags.length ? `${url}?tags=${param}` : url
+}
+
 const useInitialTags = (): string[] => {
   const searchParams = useSearchParams()
   const tagParam = searchParams.get('tags')
   return tagParam?.split('|') || []
 }
 
-const addTagParamToUrl = (url: string, tags: string[]): string => {
-  const param = tags.length > 1 ? tags.join('|') : tags[0]
-  return tags.length ? `${url}?tags=${param}` : url
-}
-
 type TagsProps = {
   onTagClick: (tag: string) => void
-  getColorVariant: (tag: Tag) => string
+  getTagColorVariant: (tag: Tag) => string
   tags: Tag[]
 }
 
-const Tags = ({ onTagClick, getColorVariant, tags }: TagsProps) => {
+const Tags = ({ onTagClick, getTagColorVariant, tags }: TagsProps) => {
   return tags.map((tag) => {
     return (
       <button
         key={tag.slug}
         onClick={() => onTagClick(tag.slug)}
         className={`inline-flex m-1 items-center rounded-md px-2 py-1 text-sm font-medium ring-1 ring-inset
-        ${getColorVariant(tag)} transition ease-in-out`}
+        ${getTagColorVariant(tag)} transition ease-in-out`}
       >
         {tag.name}
       </button>
     )
   })
-}
-
-const getColorVariant = (color: TagColors, isActive: boolean): string => {
-  const colorVariants = {
-    [TagColors.GRAY]: {
-      base: 'bg-gray-400/10 text-gray-300 ring-gray-400/20 hover:bg-transparent',
-      active: 'bg-gray-200/80 hover:bg-gray-200/80 text-gray-800 ring-gray-500',
-    },
-    [TagColors.RED]: {
-      base: 'bg-red-400/10 text-red-400 ring-red-400/20 hover:bg-transparent',
-      active: 'bg-red-200/80 hover:bg-red-200/80 text-red-800 ring-red-600',
-    },
-    [TagColors.YELLOW]: {
-      base: 'bg-yellow-400/10 text-yellow-400 ring-yellow-400/20 hover:bg-transparent',
-      active:
-        'bg-yellow-100/80 hover:bg-yellow-100/80 text-yellow-800 ring-yellow-600',
-    },
-    [TagColors.GREEN]: {
-      base: 'bg-green-400/10 text-green-400 ring-green-400/20 hover:bg-transparent',
-      active:
-        'bg-green-200/80 hover:bg-green-200/80 text-green-900 ring-green-600',
-    },
-    [TagColors.BLUE]: {
-      base: 'bg-blue-400/10 text-blue-400 ring-blue-400/20 hover:bg-transparent',
-      active: 'bg-blue-200/90 hover:bg-blue-200/90 text-blue-800 ring-blue-600',
-    },
-    [TagColors.INDIGO]: {
-      base: 'bg-indigo-400/10 text-indigo-400 ring-indigo-400/20 hover:bg-transparent',
-      active:
-        'bg-indigo-200 hover:bg-indigo-200 text-indigo-800 ring-indigo-600',
-    },
-    [TagColors.PURPLE]: {
-      base: 'bg-purple-400/10 text-purple-400 ring-purple-400/20 hover:bg-transparent',
-      active:
-        'bg-purple-200/90 hover:bg-purple-200/90 text-purple-800 ring-purple-600',
-    },
-    [TagColors.PINK]: {
-      base: 'bg-pink-400/10 text-pink-400 ring-pink-400/20 hover:bg-transparent',
-      active: 'bg-pink-200/90 hover:bg-pink-200/90 text-pink-800 ring-pink-600',
-    },
-  }
-
-  const colorVariant = colorVariants[color]
-
-  return colorVariant[isActive ? 'active' : 'base']
 }

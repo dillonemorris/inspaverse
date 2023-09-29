@@ -2,6 +2,7 @@
 
 import useSWR from 'swr'
 import { useState } from 'react'
+import { Popover, Transition } from '@headlessui/react'
 import { TagsModal } from './[id]/TagsModal'
 import { TagIcon, SparklesIcon, LinkIcon } from '@heroicons/react/20/solid'
 import { usePathname } from 'next/navigation'
@@ -36,10 +37,16 @@ const TagsButtonAndModal = () => {
   )
 }
 
+type ApiTag = {
+  slug: string
+  name: string
+  quoteCount: number
+}
+
 const useTags = (): Tag[] => {
-  const { data: apiTags } = useSWR(API_TAGS, fetcher)
+  const { data: apiTags } = useSWR<ApiTag[]>(API_TAGS, fetcher)
   const colorsRepeated = [...colorsArray, ...colorsArray, ...colorsArray]
-  const quoteCountFilter = (tag) => tag.quoteCount > 10
+  const quoteCountFilter = (tag: ApiTag) => tag.quoteCount > 10
   const filteredTags = apiTags?.filter(quoteCountFilter) || []
 
   return filteredTags.map(({ name, slug }, i: number) => ({
@@ -55,8 +62,25 @@ const ShareLink = () => {
   const pathname = usePathname()
   const currentUrl = `http://localhost:3000${pathname}`
   return (
-    <button onClick={() => navigator.clipboard.writeText(currentUrl)}>
-      <LinkIcon className="h-7 w-7 text-white transition ease-in-out hover:text-gray-300 hover:scale-110 duration-300" />
-    </button>
+    <Popover className="flex">
+      <Transition
+        enter="transition duration-100 ease-out"
+        enterFrom="transform scale-95 opacity-0"
+        enterTo="transform scale-100 opacity-100"
+        leave="transition duration-75 ease-out"
+        leaveFrom="transform scale-100 opacity-100"
+        leaveTo="transform scale-95 opacity-0"
+      >
+        <Popover.Panel className="z-10 bg-gray-800 px-2 py-1 rounded text-sm">
+          URL Copied!
+        </Popover.Panel>
+      </Transition>
+      <Popover.Button
+        className="ml-2"
+        onClick={() => navigator.clipboard.writeText(currentUrl)}
+      >
+        <LinkIcon className="h-7 w-7 text-white transition ease-in-out hover:text-gray-300 hover:scale-110 duration-300" />
+      </Popover.Button>
+    </Popover>
   )
 }
