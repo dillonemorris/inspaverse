@@ -52,6 +52,7 @@ const useTags = (): Tag[] => {
   return filteredTags.map(({ name, slug }, i: number) => ({
     name,
     slug,
+    // TODO: use modulo: colorIndex = i % colorsArray.length
     color: colorsRepeated[i],
   }))
 }
