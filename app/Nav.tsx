@@ -45,16 +45,17 @@ type ApiTag = {
 
 const useTags = (): Tag[] => {
   const { data: apiTags } = useSWR<ApiTag[]>(API_TAGS, fetcher)
-  const colorsRepeated = [...colorsArray, ...colorsArray, ...colorsArray]
   const quoteCountFilter = (tag: ApiTag) => tag.quoteCount > 10
   const filteredTags = apiTags?.filter(quoteCountFilter) || []
 
-  return filteredTags.map(({ name, slug }, i: number) => ({
-    name,
-    slug,
-    // TODO: use modulo: colorIndex = i % colorsArray.length
-    color: colorsRepeated[i],
-  }))
+  return filteredTags.map(({ name, slug }, i: number) => {
+    const colorIndex = i % colorsArray.length
+    return {
+      name,
+      slug,
+      color: colorsArray[colorIndex],
+    }
+  })
 }
 
 const colorsArray = Object.values(TagColors)
@@ -62,6 +63,7 @@ const colorsArray = Object.values(TagColors)
 const ShareLink = () => {
   const pathname = usePathname()
   const currentUrl = `http://localhost:3000${pathname}`
+  const copyUrlToClipboard = () => navigator.clipboard.writeText(currentUrl)
   return (
     <Popover className="flex">
       <Transition
@@ -76,10 +78,7 @@ const ShareLink = () => {
           URL Copied!
         </Popover.Panel>
       </Transition>
-      <Popover.Button
-        className="ml-2"
-        onClick={() => navigator.clipboard.writeText(currentUrl)}
-      >
+      <Popover.Button className="ml-2" onClick={copyUrlToClipboard}>
         <LinkIcon className="h-7 w-7 text-white transition ease-in-out hover:text-gray-300 hover:scale-110 duration-300" />
       </Popover.Button>
     </Popover>
