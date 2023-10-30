@@ -25,27 +25,27 @@ To run Inspaverse locally, follow these steps:
 git clone https://github.com/dillonemorris/inspaverse.git
 ```
 
-1. Navigate to the project directory
+2. Navigate to the project directory
 
 ```bash
 cd inspaverse
 ```
 
-1. Install the project dependencies:
+3. Install the project dependencies:
 ```bash
 npm install
 ```
 
-1. Start the development server:
+4. Start the development server:
 ```bash
 npm run dev
 ```
 
-1. Open your web browser and access Inspaverse at http://localhost:3000.
+5. Open your web browser and access Inspaverse at http://localhost:3000.
 
 ## Acknowledgments
 - Next.js for providing a powerful framework for building React applications.
-- <a href="https://github.com/lukePeavey">@lukePeavey</a> for creating the <ahttps://github.com/lukePeavey/quotable>Quotable</a> API that powers Inspaverse.
+- <a href="https://github.com/lukePeavey">@lukePeavey</a> for creating the <a href="https://github.com/lukePeavey/quotable">Quotable API</a> that powers Inspaverse.
 - The creators of the <a href="https://github.com/public-apis/public-apis#index">Public APIs</a> repo where I discovered the Quotable API
 - The creators of the inspirational quotes that bring positivity and motivation to people's lives.
 
