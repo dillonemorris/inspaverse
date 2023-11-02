@@ -2,6 +2,9 @@
 
 Inspaverse is a simple and elegant quotes app built using Next.js 13. It provides a curated collection of inspirational and motivational quotes to uplift your spirits and inspire you every day.
 
+Check it out at
+<a href="https://inspaverse.vercel.app/">https://inspaverse.vercel.app/</a>
+
 <img width="1344" alt="Screen Shot 2023-10-30 at 12 16 25 PM" src="https://github.com/dillonemorris/inspaverse/assets/27472341/fef26f8d-f458-43f3-95d4-32f9f9e4238e">
 
 <img width="1505" alt="Screen Shot 2023-10-30 at 12 18 55 PM" src="https://github.com/dillonemorris/inspaverse/assets/27472341/3e46ad33-577d-471d-9fc8-b18963c309ef">
