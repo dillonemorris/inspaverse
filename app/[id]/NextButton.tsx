@@ -11,7 +11,7 @@ export default async function NextButton({ tags }: NextButtonProps) {
   const nextUrl = buildUrlWithTagsParam(`/${nextQuote[0]._id}`, tags)
 
   return (
-    <Link href={nextUrl}>
+    <Link aria-label="Next quote button" href={nextUrl}>
       <ArrowRightCircleIcon className="h-7 w-7 text-white-400" />
     </Link>
   )

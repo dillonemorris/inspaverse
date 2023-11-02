@@ -25,7 +25,10 @@ const TagsButtonAndModal = () => {
   const tags = useTags()
   return (
     <>
-      <button onClick={() => setIsModalOpen(true)}>
+      <button
+        aria-label="Open tag modal button"
+        onClick={() => setIsModalOpen(true)}
+      >
         <TagIcon className="h-7 w-7 text-white transition ease-in-out hover:text-gray-300 hover:scale-110 duration-300" />
       </button>
       <TagsModal
@@ -78,7 +81,11 @@ const ShareLink = () => {
           URL Copied!
         </Popover.Panel>
       </Transition>
-      <Popover.Button className="ml-2" onClick={copyUrlToClipboard}>
+      <Popover.Button
+        aria-label="Copy url to clipboard button"
+        className="ml-2"
+        onClick={copyUrlToClipboard}
+      >
         <LinkIcon className="h-7 w-7 text-white transition ease-in-out hover:text-gray-300 hover:scale-110 duration-300" />
       </Popover.Button>
     </Popover>
