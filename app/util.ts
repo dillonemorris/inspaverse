@@ -1,3 +1,5 @@
+export const DOMAIN = 'https://inspaverse.vercel.app/'
+
 export const API_QUOTES_BASE = 'https://api.quotable.io'
 export const API_QUOTES = `${API_QUOTES_BASE}/quotes`
 export const API_RANDOM_QUOTE = `${API_QUOTES}/random`

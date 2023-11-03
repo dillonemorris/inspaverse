@@ -6,7 +6,7 @@ import { Popover, Transition } from '@headlessui/react'
 import { TagsModal } from './[id]/TagsModal'
 import { TagIcon, SparklesIcon, LinkIcon } from '@heroicons/react/20/solid'
 import { usePathname } from 'next/navigation'
-import { API_TAGS, fetcher, Tag, TagColors } from '@/app/util'
+import { API_TAGS, DOMAIN, fetcher, Tag, TagColors } from '@/app/util'
 
 export const Nav = () => {
   return (
@@ -64,9 +64,8 @@ const useTags = (): Tag[] => {
 const colorsArray = Object.values(TagColors)
 
 const ShareLink = () => {
-  const pathname = usePathname()
-  const currentUrl = `http://localhost:3000${pathname}`
-  const copyUrlToClipboard = () => navigator.clipboard.writeText(currentUrl)
+  const copyUrlToClipboard = useCopyUrlToClipboard()
+
   return (
     <Popover className="flex">
       <Transition
@@ -90,4 +89,10 @@ const ShareLink = () => {
       </Popover.Button>
     </Popover>
   )
+}
+
+const useCopyUrlToClipboard = () => {
+  const pathname = usePathname()
+  const currentUrl = `${DOMAIN}${pathname}`
+  return () => navigator.clipboard.writeText(currentUrl)
 }
