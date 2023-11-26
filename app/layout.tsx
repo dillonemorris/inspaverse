@@ -1,7 +1,6 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import { getPlaiceholder } from 'plaiceholder'
 import { Inter } from 'next/font/google'
 import { Nav } from './Nav'
 
@@ -39,7 +38,6 @@ export default async function RootLayout({
 
 const BackgroundImage = async () => {
   const backgroundImage = await getBackgroundImage()
-  const placeholderUrl = await getBlurredImageUrl(backgroundImage?.urls.full)
 
   if (!backgroundImage) {
     return null
@@ -49,8 +47,6 @@ const BackgroundImage = async () => {
     <Image
       alt={backgroundImage.alt_description}
       src={backgroundImage.urls.full}
-      blurDataURL={placeholderUrl}
-      placeholder="blur"
       fill
       priority
       sizes="100vw"
@@ -76,18 +72,4 @@ async function getBackgroundImage() {
   }
 
   return res.json()
-}
-
-async function getBlurredImageUrl(originalImageUrl?: string): Promise<string> {
-  if (!originalImageUrl) {
-    return ''
-  }
-
-  const buffer = await fetch(originalImageUrl).then(async (res) =>
-    Buffer.from(await res.arrayBuffer())
-  )
-
-  const { base64 } = await getPlaiceholder(buffer)
-
-  return base64
 }
